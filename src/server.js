@@ -1,18 +1,40 @@
+const events=require("events").EventEmitter;
 
-var path=require('path');                   // node js module
-var os=require('os');                       // node js module
-
-var exp=require('./module');                // module.js file in src
-
-const colors=require("colors");             // module 3rd part
+let emiiter=new events();
 
 
-//console.log( exp.getArea());
-//console.log(path.resolve('src'));
-//console.log(os.totalmem());
+emiiter.on("myevent",(arg,obj)=>{
 
-console.log("red".red, "green".green, "blue".blue);
+    console.log(`Event 1 Done by ${arg}`);
+    obj.handled=true;
+});
 
-console.log(` name is ${ exp.user.name} and age is ${ exp.user.age}`);
+emiiter.on("myevent",(arg,obj)=>{
+    if( obj.handled==false ){ console.log(`Event 2 Done by ${arg}`); }
+});
 
-console.log(exp.x);
+
+// for account and login
+require('./events/index');
+
+// emiiter.once("myevent",(arg)=>{
+//     console.log(`Single Event Done by ${arg}`);
+// });
+
+
+emiiter.emit("myevent","user",{ handled:false });
+
+//emiiter.emit("myevent","user");
+//emiiter.emit("myevent","admin");
+
+
+
+
+
+
+/* const fs=require('fs');
+    
+    fs.ReadStream("./src/data.json").on("open",()=>{
+        console.log("file open");
+    });
+ */
