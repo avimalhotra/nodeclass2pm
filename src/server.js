@@ -1,40 +1,49 @@
-const events=require("events").EventEmitter;
-
-let emiiter=new events();
-
-
-emiiter.on("myevent",(arg,obj)=>{
-
-    console.log(`Event 1 Done by ${arg}`);
-    obj.handled=true;
-});
-
-emiiter.on("myevent",(arg,obj)=>{
-    if( obj.handled==false ){ console.log(`Event 2 Done by ${arg}`); }
-});
+const http=require('http');
+const ip='127.0.0.1';
+const port=8080;
+const fs=require('fs');
 
 
-// for account and login
-require('./events/index');
+/* http.createServer((req,res)=>{
+    res.end("Hello HTTP");
+}).listen(80); */
 
-// emiiter.once("myevent",(arg)=>{
-//     console.log(`Single Event Done by ${arg}`);
-// });
+const server=http.createServer( (req,res)=>{
+    //res.statusCode=200;
+    //res.setHeader('Content-Type','text/html');
+    res.writeHead(200,{'Content-Type':'text/html'});
+ 
+    /*
+    res.write("<h1>");
+    //res.write(ip+":"+port);
+    //res.write(req.url);
+    //res.write(req.method);
+    res.write("Hello Http");
+    res.write("</h1>");
+    */
+    if( req.method=="GET" && req.url=="/"){
+        //res.write("Home Page");
+        fs.readFile('src/index.html',(err,data)=>{
 
-
-emiiter.emit("myevent","user",{ handled:false });
-
-//emiiter.emit("myevent","user");
-//emiiter.emit("myevent","admin");
-
-
-
-
-
-
-/* const fs=require('fs');
+            if( err){
+                res.writeHead(200,{'Content-Type':'text/html'});
+                res.write("Error found");
+                res.end();
+            }
+            else{
+                res.writeHead(200,{'Content-Type':'text/html'});
+                res.write(data);
+                res.end();
+            }
+        });
+    }
+    else{
+        res.write("Error");
+        res.end();
+    }
     
-    fs.ReadStream("./src/data.json").on("open",()=>{
-        console.log("file open");
-    });
- */
+});
+
+server.listen(port,ip,()=>{
+    console.log(`Server running at http://${ip}:${port}`);
+});
