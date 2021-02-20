@@ -5,6 +5,8 @@ const { use } = require("./admin");
 const nunjucks=require('nunjucks');
 const path=require('path');
 const app=express();
+//const db=require('./mdb');
+const mongoose=require('./mongoose');
 
 const bodyparser=require('body-parser');
 app.use(bodyparser.json());
