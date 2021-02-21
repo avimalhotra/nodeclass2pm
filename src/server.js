@@ -1,12 +1,12 @@
 const env=require("dotenv").config();
 const express=require('express');
 const { use } = require("./admin");
-//const ejs=require("ejs");
 const nunjucks=require('nunjucks');
 const path=require('path');
 const app=express();
-//const db=require('./mdb');
-const mongoose=require('./mongoose');
+const db=require('./mdb');
+let [Car,User]=[require('./models/car'),require('./models/user')];
+
 
 const bodyparser=require('body-parser');
 app.use(bodyparser.json());
@@ -121,26 +121,45 @@ app.get('/app',(req,res)=>{
 
 /* Get */
 app.get('/getform',(req,res)=>{
-    var formdata=req.query;
+    var name=req.query.name;
     
-    res.status(200).send(formdata);
-    //res.status(200).json( {data:formdata} );
+    Car.find({name:name},(err,data)=>{
+
+            if(err){
+                res.render('result.html',{ error:err});
+            }
+            else{ 
+                
+                if(data.length==0){
+                    res.render('result.html',{ nodata:"No car found"});
+                }
+                else{
+                    
+                    res.render('result.html',{ data:data});
+                }
+            }
+    });
+    
 });
 app.get('/product/:name/:model',(req,res)=>{
     res.status(200).send(req.params);
 })
 
-app.post('/postdata',(req,res)=>{
+app.post('/savecardata',(req,res)=>{
+   
+    let car=new Car(req.body);
 
-    let mail=req.body.email, pass=req.body.pass;
+    car.save((err)=>{
+        if( err){ 
+            res.send("Error: "+ err);
 
-    if( mail=="avimalhotra505@gmail.com" && pass=="123456"){
-        res.status(200).send("Thanks");
-    }
-    else{
-        res.status(200).send("Invalid Entry");
-    }
-    //res.status(200).send(req.body);
+        }
+        else{ 
+            res.send("Thanks");
+
+        }
+    })
+   
 });
 
 

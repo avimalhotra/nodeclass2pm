@@ -13,20 +13,22 @@
             <header>{% include "header.html" %}</header>
             <nav>{% include "nav.html" %}</nav>
            <main>
-                <p> Name is {{name | title}} and id is {{ id }}</p>
-                {% if name %}
-                    {{name}}
-                 {% endif %}
-                <ol>
-                    {% for i in month %}   
-                         <li>{{ i }}</li>
-                    {% endfor %}    
-                </ol>
-                <ul>
-                    {% for i,j in user %}   
-                         <li>{{ i }} -&gt; {{ j }} </li>
-                    {% endfor %}    
-                </ul>
+               <h2>Main</h2>
+               <form action="/getform" method="GET">
+                <div class="form-group">
+                    <label>Search car: <input type="search"  autocomplete="off" name="name" class="form-control" required></label>
+                    <button class="btn btn-primary">Search</button>
+                </div>
+                </form>
+                <h2>Car Data</h2>
+                <form action="/savecardata" method="post">
+                    <div class="form-group"><label>Car Name: <input type="text" required class="form-control" name="name"></label></div>
+                    <div class="form-group"><label>Car Type: <input type="text" required class="form-control" name="type"></label></div>
+                    <div class="form-group"><label>Car Price: <input type="text" required class="form-control" name="price"></label></div>
+                    <div class="form-group"><label>Car Fuel: <input type="text" required class="form-control" name="fuel"></label></div>
+                    <div class="form-group"><button class="btn btn-danger">Submit</button></label></div>
+                </form>
+                
            </main>
             <footer> {% include "footer.html" %}</footer>
         </div>    
