@@ -4,8 +4,8 @@ const { use } = require("./admin");
 const nunjucks=require('nunjucks');
 const path=require('path');
 const app=express();
-const db=require('./mdb');
-let [Car,User]=[require('./models/car'),require('./models/user')];
+//const db=require('./mdb');
+//let [Car,User]=[require('./models/car'),require('./models/user')];
 
 
 const bodyparser=require('body-parser');
@@ -21,43 +21,44 @@ const session=require('express-session');
 
 //
 
-const passport=require('passport');
-let LocalStrategy=require("passport-local").Strategy;
+// const passport=require('passport');
+// let LocalStrategy=require("passport-local").Strategy;
 
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-passport.serializeUser(function (user, done) {
-    done(null, user.id);
-  });
-passport.deserializeUser(function (user, next) {
-    next(null, user);
-});
+// passport.serializeUser(function (user, done) {
+//     done(null, user.id);
+//   });
+// passport.deserializeUser(function (user, next) {
+//     next(null, user);
+// });
 
-passport.use('local', new LocalStrategy((username, password, done) => {
+// passport.use('local', new LocalStrategy((username, password, done) => {
    
 
-    User.findOne({ username: username }, (err, user) => { 
+//     User.findOne({ username: username }, (err, user) => { 
        
-      if (err) { return done(err); }
-      if (!user) { return done(null, null, { message: 'No user found!' }); }
-      if (user.password !== password) {
-        return done(null, null, { message: 'Username or password is incorrect!' });
-      }
+//       if (err) { return done(err); }
+//       if (!user) { return done(null, null, { message: 'No user found!' }); }
+//       if (user.password !== password) {
+//         return done(null, null, { message: 'Username or password is incorrect!' });
+//       }
   
-      return done(null, user, null);
-    });
-  }
-));
+//       return done(null, user, null);
+//     });
+//   }
+// ));
 
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      next();
-    } else {
-      res.status(403).send('Forbidden');
-    }
-}
+
+// function isAuthenticated(req, res, next) {
+//     if (req.isAuthenticated()) {
+//       next();
+//     } else {
+//       res.status(403).send('Forbidden');
+//     }
+// }
 
 
  // trust first proxy
