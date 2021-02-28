@@ -18,6 +18,48 @@ const cp=require('cookie-parser');
 app.use(cp());
 
 const session=require('express-session');
+
+//
+
+const passport=require('passport');
+let LocalStrategy=require("passport-local").Strategy;
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+  });
+passport.deserializeUser(function (user, next) {
+    next(null, user);
+});
+
+passport.use('local', new LocalStrategy((username, password, done) => {
+   
+
+    User.findOne({ username: username }, (err, user) => { 
+       
+      if (err) { return done(err); }
+      if (!user) { return done(null, null, { message: 'No user found!' }); }
+      if (user.password !== password) {
+        return done(null, null, { message: 'Username or password is incorrect!' });
+      }
+  
+      return done(null, user, null);
+    });
+  }
+));
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      next();
+    } else {
+      res.status(403).send('Forbidden');
+    }
+}
+
+
  // trust first proxy
 app.set('trust proxy', 1);
 app.use(session({
@@ -56,9 +98,6 @@ nunjucks.configure(path.resolve(__dirname,'public/views'),{
 }); 
 
 
-app.use((req,res,next)=>{
-    next();
-});
 
 
 // router
@@ -78,6 +117,59 @@ app.get('/',(req,res)=>{
     //res.status(200).send('<h1>Hello Express</h1>');
     res.render("index.html",{ name:"avi",id:212, user:{ name:'abc', age:22 }, month:["jan","feb","mar","apr"] })
 });
+
+
+app.get('/login',(req,res)=>{
+    res.status(200).render("login.html");
+});
+
+
+app.post('/login',(req,res)=>{
+    let username=req.body.username, pass=req.body.password;
+    // if( email=="avi@gmail.com" &&  pass=="123456"){
+    //     res.status(200).render("control.html");
+    // }
+    // else{
+    //     res.status(200).render("login.html",{ data:"Invalid Userid or password"});
+    // }
+
+    // User.find({username:username},(err,data)=>{
+
+    //     if(err){
+    //         res.render('result.html',{ error:err});
+    //     }
+    //     else{ 
+            
+    //         if(data.length==0){
+    //             res.render('result.html',{ nodata:"No User found"});
+    //         }
+    //         else{
+                
+    //             res.render('control.html',{ data:data});
+    //         }
+    //     }
+    // });
+
+    passport.authenticate('local', function (err, user, info) {
+         
+        if (err) {
+          res.render('login.html', { error: err });
+        } else if (!user) {
+          res.render('login.html', { errorMessage: info.message });
+    
+        } else {
+          //setting users in session
+          req.logIn(user, function (err) { 
+            if (err) {
+              res.render('/', { error: err });
+            } else {
+              res.render('control.html');
+            }
+          })
+        }
+      })(req, res);
+});
+
 
 app.post("/getmonth",(req,res)=>{
     
@@ -114,6 +206,7 @@ app.get('/getcookie',(req,res)=>{
         res.send("cookie not found");
     }
 });
+
 
 app.get('/app',(req,res)=>{
     res.status(200).send(" Application running");
