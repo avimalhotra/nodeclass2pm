@@ -15,7 +15,9 @@ nunjucks.configure(path.resolve(__dirname,'views'),{
 
 app.get("/",(req,res)=>{
     //res.render('index.html',{});
-    res.send("hi");
+
+    res.setHeader('Content-Type','text/html');
+    res.status(200).send("<h1>Hi </h1>");
 });
 
 app.listen(3000,()=>{
